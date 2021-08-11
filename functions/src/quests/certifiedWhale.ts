@@ -8,7 +8,7 @@ const certifiedWhale: QuestChecker = async (dataSources, account) => {
   // Use a dataSource
   const balance = await dataSources.stakedToken.contract.balanceOf(account)
 
-  // Three thousand? Crikey, that's a lot. Whale territory without a doubt.
+  // A thousand? Crikey, that's a lot. Whale territory without a doubt.
   const threshold = SCALE.mul(1000)
 
   // Boolean for whether the quest is complete
