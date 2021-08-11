@@ -1,0 +1,10 @@
+schema: ./src/graphql/typeDefs.ts
+generates:
+  ./src/graphql/types.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-resolvers
+    config:
+      immutableTypes: true
+      useIndexSignature: true

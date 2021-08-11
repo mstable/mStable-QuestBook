@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "mstable-questbook"
+    "default": "mstable-questbook-ropsten",
+    "ropsten": "mstable-questbook-ropsten",
+    "production": "mstable-questbook"
   }
 }
