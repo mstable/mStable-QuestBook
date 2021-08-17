@@ -4,7 +4,7 @@ import { QuestChecker } from './types'
 
 const SCALE = BigNumber.from((1e18).toString())
 
-const certifiedWhale: QuestChecker = async (dataSources, account) => {
+const checker: QuestChecker = async (dataSources, account) => {
   // Use a dataSource
   const balance = await dataSources.stakedToken.contract.balanceOf(account)
 
@@ -27,10 +27,4 @@ const certifiedWhale: QuestChecker = async (dataSources, account) => {
   return { complete, progress }
 }
 
-// All quests have metadata; this could be stored elsewhere if needed (e.g. Firestore)
-const metadata = {
-  title: 'Certified whale',
-  description: 'Are you a certified whale? We can make it happen',
-}
-
-export default [1, certifiedWhale, metadata] as const
+export default [0, checker] as const

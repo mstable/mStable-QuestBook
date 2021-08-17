@@ -5,10 +5,10 @@
     "lint:eslint": "eslint --ext .js,.ts .",
     "lint:prettier": "prettier --write .",
     "build": "yarn run tsc",
-    "serve": "yarn run build && firebase emulators:start --only functions",
+    "serve": "yarn run build && firebase emulators:start",
     "shell": "yarn run build && firebase functions:shell",
     "start": "yarn run shell",
-    "deploy": "firebase deploy --only functions",
+    "deploy": "firebase deploy",
     "logs": "firebase functions:log"
   },
   "prettier": {
@@ -23,10 +23,12 @@
   "main": "lib/index.js",
   "dependencies": {
     "@ethersproject/abstract-provider": "^5.4.1",
-    "@mstable/protocol": "^2.2.3",
+    "@types/defer-promise": "^1.0.0",
     "@types/express": "^4.17.13",
     "apollo-datasource": "^3.0.3",
+    "apollo-datasource-firestore": "^3.0.0",
     "apollo-server-cloud-functions": "^3.1.2",
+    "defer-promise": "^2.0.1",
     "ethers": "^5.4.4",
     "firebase-admin": "^9.11.0",
     "firebase-functions": "^3.14.1",

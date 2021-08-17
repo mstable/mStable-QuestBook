@@ -1,11 +1,13 @@
-import { QuestChecker, QuestDefinitions } from './types'
+import { QuestChecker, QuestDefinition, QuestDefinitions } from './types'
 
-import certifiedWhale from './certifiedWhale'
+import certifiedWhale from './0.certifiedWhale'
+import humbleMinnow from './1.humbleMinnow'
 
 const quests = [
   certifiedWhale,
+  humbleMinnow,
   // Add quests here ^
-] as Array<[number, QuestChecker, { title: string; description: string }]>
+] as Array<[number, QuestChecker]>
 
 // Runtime sanity check
 quests.forEach(([id], idx, arr) => {
@@ -14,4 +16,14 @@ quests.forEach(([id], idx, arr) => {
   }
 })
 
-export const questsMap = quests.reduce<QuestDefinitions>((prev, [id, checker, metadata]) => ({ ...prev, [id]: { checker, metadata } }), {})
+export const questsMap = quests.reduce<QuestDefinitions>((prev, [id, checker]) => ({ ...prev, [id]: { id: id.toString(), checker } }), {})
+
+export const isQuestDefined = (questId: string) => Object.prototype.hasOwnProperty.call(questsMap, parseInt(questId))
+
+export const getQuestDefinition = (questId: string): QuestDefinition => {
+  const quest = questsMap[parseInt(questId)]
+  if (!quest) {
+    throw new Error(`Quest ID ${questId} not found`)
+  }
+  return quest
+}
