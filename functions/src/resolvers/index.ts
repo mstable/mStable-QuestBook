@@ -12,7 +12,6 @@ export const resolvers: Resolvers<{ dataSources: DataSources }> = {
       if (!questDefined) return null
 
       const metadata = await dataSources.metadata.findOne(id)
-      console.log(id, typeof id, metadata)
       return { id, metadata }
     },
 
