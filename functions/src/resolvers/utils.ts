@@ -1,14 +1,28 @@
+import { DefenderRelayProvider, DefenderRelaySigner } from 'defender-relay-client/lib/ethers'
 import { arrayify, solidityKeccak256, verifyMessage } from 'ethers/lib/utils'
 import { AuthenticationError } from 'apollo-server-cloud-functions'
 import defer from 'defer-promise'
 import { config, logger } from 'firebase-functions'
-import { Wallet } from 'ethers'
 
-const signerWallet = new Wallet(config().questbook.quest_signer_private_key)
+const defenderSigner = (() => {
+  const {
+    questbook: {
+      defender: { questmaster_secret, questmaster_api_key },
+    },
+  } = config()
+
+  const credentials = {
+    apiKey: questmaster_api_key,
+    apiSecret: questmaster_secret,
+  }
+
+  const provider = new DefenderRelayProvider(credentials)
+  return new DefenderRelaySigner(credentials, provider)
+})()
 
 export const signQuestSubmission = async (id: string, account: string): Promise<string> => {
   const messageHash = solidityKeccak256(['address', 'uint256'], [account, parseInt(id)])
-  return signerWallet.signMessage(arrayify(messageHash))
+  return defenderSigner.signMessage(arrayify(messageHash))
 }
 
 export const verifySigningAddress = (message: string, address: string, signature: string): boolean => {
