@@ -119,7 +119,7 @@ const getSubmission = async (id: string, user: UserDoc, dataSources: DataSources
   const { checker } = getQuestDefinition(id)
 
   // Check on-chain first; source of truth
-  const hasCompleted = await dataSources.stakedToken.contract.hasCompleted(account, id)
+  const hasCompleted = await dataSources.questManager.contract.hasCompleted(account, id)
   if (hasCompleted) {
     if (!user.completed.includes(id)) {
       // Update Firestore quest completion

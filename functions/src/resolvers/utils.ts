@@ -4,23 +4,27 @@ import { AuthenticationError } from 'apollo-server-cloud-functions'
 import defer from 'defer-promise'
 import { config, logger } from 'firebase-functions'
 
-const defenderSigner = (() => {
+const getRelayCredentials = () => {
   const {
     questbook: {
       defender: { questmaster_secret, questmaster_api_key },
     },
   } = config()
 
-  const credentials = {
+  return {
     apiKey: questmaster_api_key,
     apiSecret: questmaster_secret,
   }
+}
 
+export const getDefenderSigner = () => {
+  const credentials = getRelayCredentials()
   const provider = new DefenderRelayProvider(credentials)
   return new DefenderRelaySigner(credentials, provider)
-})()
+}
 
 export const signQuestSubmission = async (id: string, account: string): Promise<string> => {
+  const defenderSigner = getDefenderSigner()
   const messageHash = solidityKeccak256(['address', 'uint256'], [account, parseInt(id)])
   return defenderSigner.signMessage(arrayify(messageHash))
 }

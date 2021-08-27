@@ -1,3 +1,4 @@
+import { QuestManager__factory } from './QuestManager__factory' // TODO replace with @mstable/protocol
 import { StakedToken__factory } from './StakedToken__factory' // TODO replace with @mstable/protocol
 import { providers } from 'ethers'
 import { config } from 'firebase-functions'
@@ -22,12 +23,13 @@ export const dataSources = (): DataSources => {
     network,
     infura_key,
     infura_id,
-    data_sources: { staked_token_address },
+    data_sources: { staked_token_address, quest_manager_address },
   } = config().questbook
 
   const provider = new providers.InfuraProvider(network, { projectId: infura_id, projectSecret: infura_key })
 
   const stakedToken = StakedToken__factory.connect(staked_token_address, provider)
+  const questManager = QuestManager__factory.connect(quest_manager_address, provider)
 
   // TODO add more contract sources
   // TODO add subgraph sources
@@ -37,6 +39,7 @@ export const dataSources = (): DataSources => {
   const metadataCollection = firestore.collection('metadata') as CollectionReference<MetadataDoc>
 
   return {
+    questManager: new ContractDataSource(questManager as never),
     stakedToken: new ContractDataSource(stakedToken as never),
     users: new UsersDataSource(usersCollection),
     metadata: new MetadataDataSource(metadataCollection),
