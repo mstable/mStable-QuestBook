@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@alloc/quick-lru@^5.2.0":
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/@alloc/quick-lru/-/quick-lru-5.2.0.tgz#7bf68b20c0a350f936915fcae06f58e32007ce30"
+  integrity sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==
+
 "@apollo/protobufjs@1.2.2":
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/@apollo/protobufjs/-/protobufjs-1.2.2.tgz#4bd92cd7701ccaef6d517cdb75af2755f049f87c"
@@ -1865,6 +1870,19 @@ apollo-datasource-firestore@^3.0.0:
     bson "^4.4.0"
     dataloader "^2.0.0"
 
+apollo-datasource-http@^0.17.1:
+  version "0.17.1"
+  resolved "https://registry.yarnpkg.com/apollo-datasource-http/-/apollo-datasource-http-0.17.1.tgz#8bcc5859bb54dd9c07e3e86d415b5839b766b6e7"
+  integrity sha512-kVmtZHYO+ktkTbfbxhRV/iR+MMNAhFaxO/0tx2ZJAGWwaKazcaBk6RwNS4mONhrRFJtF5K9u8F85yKPrlD1leQ==
+  dependencies:
+    "@alloc/quick-lru" "^5.2.0"
+    apollo-datasource "^0.9.0"
+    apollo-server-caching "^0.7.0"
+    apollo-server-errors "^2.5.0"
+    apollo-server-types "^0.9.0"
+    graphql "^15.5.1"
+    undici "^4.4.2"
+
 apollo-datasource@^0.9.0:
   version "0.9.0"
   resolved "https://registry.yarnpkg.com/apollo-datasource/-/apollo-datasource-0.9.0.tgz#b0b2913257a6103a5f4c03cb56d78a30e9d850db"
@@ -1889,6 +1907,13 @@ apollo-graphql@^0.9.0:
     core-js-pure "^3.10.2"
     lodash.sortby "^4.7.0"
     sha.js "^2.4.11"
+
+apollo-reporting-protobuf@^0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/apollo-reporting-protobuf/-/apollo-reporting-protobuf-0.8.0.tgz#ae9d967934d3d8ed816fc85a0d8068ef45c371b9"
+  integrity sha512-B3XmnkH6Y458iV6OsA7AhfwvTgeZnFq9nPVjbxmLKnvfkEl8hYADtz724uPa0WeBiD7DSFcnLtqg9yGmCkBohg==
+  dependencies:
+    "@apollo/protobufjs" "1.2.2"
 
 apollo-reporting-protobuf@^3.0.0:
   version "3.0.0"
@@ -1994,6 +2019,15 @@ apollo-server-plugin-base@^3.1.1:
   integrity sha512-gkV/UtMji6SrX8CdZ5/3IlRBVE57CM+DL6x9MA3pjNEc357OOC3dnh1SXNmp0cvqn66CB1kODGrqKGRxyl/qpA==
   dependencies:
     apollo-server-types "^3.1.1"
+
+apollo-server-types@^0.9.0:
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/apollo-server-types/-/apollo-server-types-0.9.0.tgz#ccf550b33b07c48c72f104fbe2876232b404848b"
+  integrity sha512-qk9tg4Imwpk732JJHBkhW0jzfG0nFsLqK2DY6UhvJf7jLnRePYsPxWfPiNkxni27pLE2tiNlCwoDFSeWqpZyBg==
+  dependencies:
+    apollo-reporting-protobuf "^0.8.0"
+    apollo-server-caching "^0.7.0"
+    apollo-server-env "^3.1.0"
 
 apollo-server-types@^3.1.1:
   version "3.1.1"
@@ -6017,6 +6051,11 @@ unc-path-regex@^0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/unc-path-regex/-/unc-path-regex-0.1.2.tgz#e73dd3d7b0d7c5ed86fbac6b0ae7d8c6a69d50fa"
   integrity sha1-5z3T17DXxe2G+6xrCufYxqadUPo=
+
+undici@^4.4.2, undici@^4.5.1:
+  version "4.5.1"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-4.5.1.tgz#482456da326b06220fcbd4db3eacc2fba1f2d05d"
+  integrity sha512-1Kmphp4SMwVbSauz9xH4gxt0m3sLGs5qRHs/XYgjeO3bNSt6hspDZqMhM8+ETu9ynB5bq9e6mnwcDz+NVCQ3UQ==
 
 unfetch@^4.2.0:
   version "4.2.0"

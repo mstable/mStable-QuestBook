@@ -3,7 +3,7 @@ import { GraphQLError } from 'graphql'
 import { GraphQLRequestContextDidEncounterErrors } from 'apollo-server-types'
 
 export class ApolloServerPluginError<T> implements ApolloServerPlugin<T> {
-  constructor(protected errorHandler: (e: GraphQLError, requestContext: GraphQLRequestContextDidEncounterErrors<T>) => any) {}
+  constructor(protected errorHandler: (e: GraphQLError, requestContext: GraphQLRequestContextDidEncounterErrors<T>) => unknown) {}
 
   async requestDidStart(): Promise<GraphQLRequestListener<T>> {
     return {

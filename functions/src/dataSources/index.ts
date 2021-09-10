@@ -6,10 +6,27 @@ import * as admin from 'firebase-admin'
 import { firestore } from 'firebase-admin'
 import CollectionReference = firestore.CollectionReference
 
-import { DataSources } from './types'
 import { ContractDataSource } from './ContractDataSource'
 import { UserDoc, UsersDataSource } from './UsersDataSource'
-import { MetadataDataSource, MetadataDoc } from './MetadataDataSource'
+import { LegacyGovSubgraphDataSource } from './LegacyGovSubgraphDataSource'
+import { QuestManager } from './QuestManager'
+import { StakedToken } from './StakedToken'
+import { PolygonProtocolSubgraphDataSource } from './PolygonProtocolSubgraphDataSource'
+import { MainnetProtocolSubgraphDataSource } from './MainnetProtocolSubgraphDataSource'
+
+export interface DataSources {
+  // Firestores
+  users: UsersDataSource
+
+  // Contracts
+  questManager: ContractDataSource<QuestManager>
+  stakedToken: ContractDataSource<StakedToken> // TODO add BPT as well
+
+  // Subgraphs
+  legacyGovSubgraph: LegacyGovSubgraphDataSource
+  polygonProtocolSubgraph: PolygonProtocolSubgraphDataSource
+  mainnetProtocolSubgraph: MainnetProtocolSubgraphDataSource
+}
 
 const adminConfig = JSON.parse(process.env.FIREBASE_CONFIG as string)
 
@@ -31,17 +48,15 @@ export const dataSources = (): DataSources => {
   const stakedToken = StakedToken__factory.connect(staked_token_address, provider)
   const questManager = QuestManager__factory.connect(quest_manager_address, provider)
 
-  // TODO add more contract sources
-  // TODO add subgraph sources
-
   const firestore = admin.firestore()
   const usersCollection = firestore.collection('users') as CollectionReference<UserDoc>
-  const metadataCollection = firestore.collection('metadata') as CollectionReference<MetadataDoc>
 
   return {
     questManager: new ContractDataSource(questManager as never),
     stakedToken: new ContractDataSource(stakedToken as never),
     users: new UsersDataSource(usersCollection),
-    metadata: new MetadataDataSource(metadataCollection),
+    legacyGovSubgraph: LegacyGovSubgraphDataSource.create(),
+    polygonProtocolSubgraph: PolygonProtocolSubgraphDataSource.create(),
+    mainnetProtocolSubgraph: MainnetProtocolSubgraphDataSource.create(),
   }
 }

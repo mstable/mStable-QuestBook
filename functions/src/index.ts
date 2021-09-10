@@ -1,4 +1,5 @@
-import { ApolloError, ApolloServer, AuthenticationError } from 'apollo-server-cloud-functions'
+import { ApolloError, ApolloServer, AuthenticationError, UserInputError } from 'apollo-server-cloud-functions'
+import { GraphQLError } from 'graphql'
 import { ApolloServerPluginLandingPageDisabled } from 'apollo-server-core'
 import * as express from 'express'
 import * as functions from 'firebase-functions'
@@ -12,10 +13,14 @@ import { ApolloServerPluginError } from './plugins'
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  dataSources,
+  dataSources: dataSources as never, // not all are datasources
   formatError: (error) => {
-    if (error.originalError instanceof AuthenticationError) {
-      return error
+    if (
+      error.originalError instanceof AuthenticationError ||
+      error.originalError instanceof UserInputError ||
+      error.originalError instanceof GraphQLError
+    ) {
+      return error.originalError
     }
     return new ApolloError('Internal server error')
   },

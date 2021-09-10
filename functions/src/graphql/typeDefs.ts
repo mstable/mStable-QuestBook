@@ -1,44 +1,70 @@
 import { gql } from 'apollo-server-cloud-functions'
 
 export const typeDefs = gql`
-  type QuestMetadata {
-    title: String!
-    description: String!
-    imageUrl: String
-    # More...
-  }
-
   type Quest {
     id: ID!
-    metadata: QuestMetadata
-    submission(account: ID!): QuestSubmission
+    ethereumId: Int
+    objectives: [QuestObjective!]!
+    title: String!
+    description: String!
+    imageURI: String
+    userQuest(userId: ID!): UserQuest
   }
 
-  type QuestSubmission {
+  type QuestObjective {
+    id: ID!
+    points: Int!
+    title: String!
+    description: String!
+  }
+
+  type UserQuest {
+    id: ID!
     complete: Boolean!
     progress: Float
     signature: String
-    quest: Quest!
-    user: User
+    objectives: [UserQuestObjective!]
+  }
+
+  type UserQuestObjective {
+    id: ID!
+    complete: Boolean!
+    progress: Float
   }
 
   type Query {
-    quest(id: ID!): Quest
-    quests: [Quest]!
-    user(account: ID!): User
-    optInQueue: [User]!
-  }
-
-  type User {
-    id: ID!
-    queueOptIn: Boolean
-    completed: [Quest]!
-    queue: [Quest]!
+    quests(userId: ID): [Quest!]!
   }
 
   type Mutation {
-    queueOptIn(account: ID!, signature: String!): Boolean!
-    queueOptOut(account: ID!, signature: String!): Boolean!
-    setMetadata(json: String!, signature: String!): Boolean!
+    updateQuest(userId: ID!, questId: ID!): Boolean!
+    updateQuests(userId: ID!): Boolean!
+  }
+
+  query Quests($userId: ID!, $hasUser: Boolean!) {
+    quests {
+      id
+      ethereumId
+      title
+      description
+      imageURI
+      objectives {
+        id
+        title
+        description
+        points
+      }
+      userQuest(userId: $userId) @include(if: $hasUser) {
+        id
+        signature
+        complete
+        progress
+        objectives {
+          id
+          complete
+          progress
+        }
+      }
+    }
   }
 `
