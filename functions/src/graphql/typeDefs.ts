@@ -4,6 +4,7 @@ export const typeDefs = gql`
   type Quest {
     id: ID!
     ethereumId: Int
+    requiredPoints: Int
     objectives: [QuestObjective!]!
     title: String!
     description: String!
@@ -32,13 +33,29 @@ export const typeDefs = gql`
     progress: Float
   }
 
+  type User {
+    id: ID!
+    optInQueue: Boolean!
+    quests: [UserQuest!]!
+  }
+
+  type QuestCompletionQueueItem {
+    ethereumId: Int!
+    userId: ID!
+  }
+
   type Query {
     quests(userId: ID): [Quest!]!
+    quest(questId: ID!, userId: ID): Quest
+    queue: [QuestCompletionQueueItem!]!
+    user(userId: ID!): User!
   }
 
   type Mutation {
-    updateQuest(userId: ID!, questId: ID!): Boolean!
-    updateQuests(userId: ID!): Boolean!
+    updateQuest(userId: ID!, questId: ID!): Quest!
+    updateQuests(userId: ID!): [Quest!]!
+    queueOptIn(userId: ID!, signature: String!): User!
+    queueOptOut(userId: ID!, signature: String!): User!
   }
 
   query Quests($userId: ID!, $hasUser: Boolean!) {

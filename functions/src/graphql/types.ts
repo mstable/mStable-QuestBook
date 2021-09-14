@@ -15,8 +15,10 @@ export type Scalars = {
 
 export type Mutation = {
   readonly __typename?: 'Mutation';
-  readonly updateQuest: Scalars['Boolean'];
-  readonly updateQuests: Scalars['Boolean'];
+  readonly updateQuest: Quest;
+  readonly updateQuests: ReadonlyArray<Quest>;
+  readonly queueOptIn: User;
+  readonly queueOptOut: User;
 };
 
 
@@ -30,9 +32,24 @@ export type MutationUpdateQuestsArgs = {
   userId: Scalars['ID'];
 };
 
+
+export type MutationQueueOptInArgs = {
+  userId: Scalars['ID'];
+  signature: Scalars['String'];
+};
+
+
+export type MutationQueueOptOutArgs = {
+  userId: Scalars['ID'];
+  signature: Scalars['String'];
+};
+
 export type Query = {
   readonly __typename?: 'Query';
   readonly quests: ReadonlyArray<Quest>;
+  readonly quest?: Maybe<Quest>;
+  readonly queue: ReadonlyArray<QuestCompletionQueueItem>;
+  readonly user: User;
 };
 
 
@@ -40,10 +57,22 @@ export type QueryQuestsArgs = {
   userId?: Maybe<Scalars['ID']>;
 };
 
+
+export type QueryQuestArgs = {
+  questId: Scalars['ID'];
+  userId?: Maybe<Scalars['ID']>;
+};
+
+
+export type QueryUserArgs = {
+  userId: Scalars['ID'];
+};
+
 export type Quest = {
   readonly __typename?: 'Quest';
   readonly id: Scalars['ID'];
   readonly ethereumId?: Maybe<Scalars['Int']>;
+  readonly requiredPoints?: Maybe<Scalars['Int']>;
   readonly objectives: ReadonlyArray<QuestObjective>;
   readonly title: Scalars['String'];
   readonly description: Scalars['String'];
@@ -56,12 +85,25 @@ export type QuestUserQuestArgs = {
   userId: Scalars['ID'];
 };
 
+export type QuestCompletionQueueItem = {
+  readonly __typename?: 'QuestCompletionQueueItem';
+  readonly ethereumId: Scalars['Int'];
+  readonly userId: Scalars['ID'];
+};
+
 export type QuestObjective = {
   readonly __typename?: 'QuestObjective';
   readonly id: Scalars['ID'];
   readonly points: Scalars['Int'];
   readonly title: Scalars['String'];
   readonly description: Scalars['String'];
+};
+
+export type User = {
+  readonly __typename?: 'User';
+  readonly id: Scalars['ID'];
+  readonly optInQueue: Scalars['Boolean'];
+  readonly quests: ReadonlyArray<UserQuest>;
 };
 
 export type UserQuest = {
@@ -151,13 +193,15 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   Mutation: ResolverTypeWrapper<{}>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
+  String: ResolverTypeWrapper<Scalars['String']>;
   Query: ResolverTypeWrapper<{}>;
   Quest: ResolverTypeWrapper<Quest>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
-  String: ResolverTypeWrapper<Scalars['String']>;
+  QuestCompletionQueueItem: ResolverTypeWrapper<QuestCompletionQueueItem>;
   QuestObjective: ResolverTypeWrapper<QuestObjective>;
+  User: ResolverTypeWrapper<User>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   UserQuest: ResolverTypeWrapper<UserQuest>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   UserQuestObjective: ResolverTypeWrapper<UserQuestObjective>;
@@ -166,30 +210,38 @@ export type ResolversTypes = ResolversObject<{
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   Mutation: {};
-  Boolean: Scalars['Boolean'];
   ID: Scalars['ID'];
+  String: Scalars['String'];
   Query: {};
   Quest: Quest;
   Int: Scalars['Int'];
-  String: Scalars['String'];
+  QuestCompletionQueueItem: QuestCompletionQueueItem;
   QuestObjective: QuestObjective;
+  User: User;
+  Boolean: Scalars['Boolean'];
   UserQuest: UserQuest;
   Float: Scalars['Float'];
   UserQuestObjective: UserQuestObjective;
 }>;
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
-  updateQuest?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUpdateQuestArgs, 'userId' | 'questId'>>;
-  updateQuests?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationUpdateQuestsArgs, 'userId'>>;
+  updateQuest?: Resolver<ResolversTypes['Quest'], ParentType, ContextType, RequireFields<MutationUpdateQuestArgs, 'userId' | 'questId'>>;
+  updateQuests?: Resolver<ReadonlyArray<ResolversTypes['Quest']>, ParentType, ContextType, RequireFields<MutationUpdateQuestsArgs, 'userId'>>;
+  queueOptIn?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationQueueOptInArgs, 'userId' | 'signature'>>;
+  queueOptOut?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationQueueOptOutArgs, 'userId' | 'signature'>>;
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   quests?: Resolver<ReadonlyArray<ResolversTypes['Quest']>, ParentType, ContextType, RequireFields<QueryQuestsArgs, never>>;
+  quest?: Resolver<Maybe<ResolversTypes['Quest']>, ParentType, ContextType, RequireFields<QueryQuestArgs, 'questId'>>;
+  queue?: Resolver<ReadonlyArray<ResolversTypes['QuestCompletionQueueItem']>, ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryUserArgs, 'userId'>>;
 }>;
 
 export type QuestResolvers<ContextType = any, ParentType extends ResolversParentTypes['Quest'] = ResolversParentTypes['Quest']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   ethereumId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  requiredPoints?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   objectives?: Resolver<ReadonlyArray<ResolversTypes['QuestObjective']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -198,11 +250,24 @@ export type QuestResolvers<ContextType = any, ParentType extends ResolversParent
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type QuestCompletionQueueItemResolvers<ContextType = any, ParentType extends ResolversParentTypes['QuestCompletionQueueItem'] = ResolversParentTypes['QuestCompletionQueueItem']> = ResolversObject<{
+  ethereumId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  userId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type QuestObjectiveResolvers<ContextType = any, ParentType extends ResolversParentTypes['QuestObjective'] = ResolversParentTypes['QuestObjective']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   points?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  optInQueue?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  quests?: Resolver<ReadonlyArray<ResolversTypes['UserQuest']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -226,7 +291,9 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Quest?: QuestResolvers<ContextType>;
+  QuestCompletionQueueItem?: QuestCompletionQueueItemResolvers<ContextType>;
   QuestObjective?: QuestObjectiveResolvers<ContextType>;
+  User?: UserResolvers<ContextType>;
   UserQuest?: UserQuestResolvers<ContextType>;
   UserQuestObjective?: UserQuestObjectiveResolvers<ContextType>;
 }>;

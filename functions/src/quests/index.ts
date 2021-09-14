@@ -2,10 +2,9 @@ import { QuestDefinition } from './types'
 
 import { theGreatMigration } from './theGreatMigration'
 import { metanautSpaceProgram } from './metanautSpaceProgram'
-import { stakeTime } from './stakeTime'
 import { whale } from './whale'
 
-export const QUESTS: readonly QuestDefinition[] = [theGreatMigration, metanautSpaceProgram, stakeTime, whale] as const
+export const QUESTS: readonly QuestDefinition[] = [theGreatMigration, metanautSpaceProgram, whale] as const
 
 // Runtime sanity check
 QUESTS.forEach((def, idx, arr) => {

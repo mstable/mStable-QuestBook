@@ -1,6 +1,23 @@
 import { DefenderRelayProvider, DefenderRelaySigner } from 'defender-relay-client/lib/ethers'
-import { arrayify, solidityKeccak256 } from 'ethers/lib/utils'
+import { arrayify, solidityKeccak256, verifyMessage } from 'ethers/lib/utils'
 import { config } from 'firebase-functions'
+import { AuthenticationError } from 'apollo-server-cloud-functions'
+
+export const verifySigningAddress = (message: string, address: string, signature: string): boolean => {
+  let signingAddress
+
+  try {
+    signingAddress = verifyMessage(message, signature)
+  } catch (error) {
+    throw new AuthenticationError(`Invalid signature: ${error.message}`)
+  }
+
+  if (signingAddress.toLowerCase() !== address.toLowerCase()) {
+    throw new AuthenticationError(`Invalid signature: expected signed message from ${address}, got ${signingAddress}`)
+  }
+
+  return true
+}
 
 const getRelayCredentials = () => {
   const {

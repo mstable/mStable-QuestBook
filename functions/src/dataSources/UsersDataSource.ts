@@ -19,6 +19,7 @@ export interface UserDoc {
   readonly id: string // address
   readonly collection: 'users'
   quests: UserQuestDoc[]
+  optInQueue?: boolean
 }
 
 export class UsersDataSource extends FirestoreDataSource<UserDoc, null> {
@@ -38,6 +39,14 @@ export class UsersDataSource extends FirestoreDataSource<UserDoc, null> {
   async getOrCreateUserQuest(id: string, questId: string): Promise<UserQuestDoc> {
     const user = await this.ensureUserQuestExists(id, questId)
     return this.getUserQuest(user, questId)
+  }
+
+  async optInQueue(id: string) {
+    return this.updateOnePartial(id, { optInQueue: true })
+  }
+
+  async optOutQueue(id: string) {
+    return this.updateOnePartial(id, { optInQueue: false })
   }
 
   async setQuestProgress(id: string, questId: string, progress: number) {
