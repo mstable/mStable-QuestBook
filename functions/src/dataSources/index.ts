@@ -35,6 +35,8 @@ admin.initializeApp({
   ...adminConfig,
 })
 
+admin.firestore().settings({ ignoreUndefinedProperties: true })
+
 export const dataSources = (): DataSources => {
   const {
     network,

@@ -11,5 +11,5 @@ export const metanautSpaceProgram: QuestDefinition = {
   objectives,
   requiredPoints: 100,
   title: 'Metanaut Space Program',
-  description: 'To the moon. Get at least 100 QP to complete this quest.',
+  description: 'To the moon. Get at least 100 QP to complete this quest. More objectives are coming throughout Season 0.',
 }

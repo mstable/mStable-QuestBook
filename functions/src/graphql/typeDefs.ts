@@ -4,7 +4,7 @@ export const typeDefs = gql`
   type Quest {
     id: ID!
     ethereumId: Int
-    requiredPoints: Int
+    requiredPoints: Float
     objectives: [QuestObjective!]!
     title: String!
     description: String!
@@ -14,7 +14,7 @@ export const typeDefs = gql`
 
   type QuestObjective {
     id: ID!
-    points: Int!
+    points: Float!
     title: String!
     description: String!
   }
