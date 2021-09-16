@@ -18,10 +18,10 @@ const objectives: QuestObjective[] = [
   {
     id: 'migratedToV2',
     title: 'Migrate to V2',
-    description: 'Migrate 80% of your previous staked balance to Staking V2 before the cutoff date',
+    description: 'Migrate 90% of your previous staked balance to Staking V2 before the cutoff date',
     points: 50,
     async checker(account, dataSources) {
-      const amountStakedV1 = await dataSources.legacyGovSubgraph.stakedAmountBeforeCutoff(account, 1623990000)
+      const amountStakedV1 = await dataSources.legacyGovSubgraph.stakedAmountBeforeCutoff(account, 1634367339)
 
       if (amountStakedV1 <= 0) {
         return {
@@ -30,19 +30,26 @@ const objectives: QuestObjective[] = [
         }
       }
 
-      const amountStakedV2BN = await dataSources.stakedToken.contract.balanceOf(account)
-      const amountStakedV2 = parseFloat(formatUnits(amountStakedV2BN))
+      const amountStakedMTAV2BN = await dataSources.stakedTokenMTA.contract.balanceOf(account)
+      const amountStakedMTAV2 = parseFloat(formatUnits(amountStakedMTAV2BN))
 
-      if (amountStakedV2 <= 0) {
+      const [amountStakedBPTRaw] = await dataSources.stakedTokenBPT.contract.rawBalanceOf(account)
+      const priceCoefficient = await dataSources.stakedTokenBPT.contract.priceCoefficient()
+      const amountStakedBPTInMTATermsBN = amountStakedBPTRaw.mul(priceCoefficient).div(10000)
+      const amountStakedBPTInMTATerms = parseFloat(formatUnits(amountStakedBPTInMTATermsBN))
+
+      const totalAmountStakedInMTATerms = amountStakedMTAV2 + amountStakedBPTInMTATerms
+
+      if (totalAmountStakedInMTATerms <= 0) {
         return {
           complete: false,
           progress: 0,
         }
       }
 
-      const threshold = amountStakedV1 * 0.8
-      const progress = Math.max(amountStakedV2 / threshold, 1)
-      const complete = amountStakedV2 >= threshold
+      const threshold = amountStakedV1 * 0.9
+      const progress = Math.max(totalAmountStakedInMTATerms / threshold, 1)
+      const complete = totalAmountStakedInMTATerms >= threshold
 
       return {
         complete,

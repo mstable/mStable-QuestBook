@@ -9,7 +9,7 @@ const objectives: QuestObjective[] = [
     description: 'Staked 1M MTA for > 12 months',
     points: 100,
     async checker(account, dataSources) {
-      const balanceData = await dataSources.stakedToken.contract.balanceData(account)
+      const balanceData = await dataSources.stakedTokenMTA.contract.balanceData(account)
       const oneMil = BigNumber.from((1e18).toString()).pow(7)
       const hodledAmount = balanceData.raw.gte(oneMil)
       const hodledTime = balanceData.timeMultiplier >= 40
