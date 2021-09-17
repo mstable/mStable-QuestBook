@@ -1,13 +1,13 @@
 import { QuestDefinition } from './types'
 
 import { theGreatMigration } from './theGreatMigration'
-// import { metanautSpaceProgram } from './metanautSpaceProgram'
+import { metanautSpaceProgram } from './metanautSpaceProgram'
 // import { whale } from './whale'
 // import { democracyMaxi } from './democracyMaxi'
 
 export const QUESTS: readonly QuestDefinition[] = [
   theGreatMigration,
-  // metanautSpaceProgram,
+  metanautSpaceProgram,
   // democracyMaxi,
   // whale,
 ] as const

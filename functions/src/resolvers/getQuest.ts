@@ -2,7 +2,7 @@ import { UserDoc } from '../dataSources/UsersDataSource'
 import { QuestDefinition } from '../quests/types'
 import { UserQuest } from '../graphql/types'
 
-export const fetchQuest = async (quest: QuestDefinition, user?: UserDoc) => {
+export const getQuest = (quest: QuestDefinition, user?: UserDoc) => {
   const { id, ethereumId, objectives, title, description, requiredPoints, imageURI } = quest
   let userQuest: UserQuest | null = null
 

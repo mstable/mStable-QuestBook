@@ -1,16 +1,15 @@
-import {
-  QuestManager,
-  QuestManager__factory,
-  StakedTokenBPT__factory,
-  StakedTokenBPT,
-  StakedToken,
-  StakedToken__factory,
-} from '@mstable/protocol/dist/types'
 import { providers } from 'ethers'
 import { config } from 'firebase-functions'
 import * as admin from 'firebase-admin'
 import { firestore } from 'firebase-admin'
 import CollectionReference = firestore.CollectionReference
+
+import { QuestManager } from '../typechain/QuestManager'
+import { QuestManager__factory } from '../typechain/factories/QuestManager__factory'
+import { StakedTokenMTA } from '../typechain/StakedTokenMTA'
+import { StakedTokenMTA__factory } from '../typechain/factories/StakedTokenMTA__factory'
+import { StakedTokenBPT } from '../typechain/StakedTokenBPT'
+import { StakedTokenBPT__factory } from '../typechain/factories/StakedTokenBPT__factory'
 
 import { ContractDataSource } from './ContractDataSource'
 import { UserDoc, UsersDataSource } from './UsersDataSource'
@@ -24,7 +23,7 @@ export interface DataSources {
 
   // Contracts
   questManager: ContractDataSource<QuestManager>
-  stakedTokenMTA: ContractDataSource<StakedToken>
+  stakedTokenMTA: ContractDataSource<StakedTokenMTA>
   stakedTokenBPT: ContractDataSource<StakedTokenBPT>
 
   // Subgraphs
@@ -52,7 +51,7 @@ export const dataSources = (): DataSources => {
 
   const provider = new providers.InfuraProvider(network, { projectId: infura_id, projectSecret: infura_key })
 
-  const stakedTokenMTA = StakedToken__factory.connect(staked_token_mta_address, provider)
+  const stakedTokenMTA = StakedTokenMTA__factory.connect(staked_token_mta_address, provider)
   const stakedTokenBPT = StakedTokenBPT__factory.connect(staked_token_bpt_address, provider)
   const questManager = QuestManager__factory.connect(quest_manager_address, provider)
 

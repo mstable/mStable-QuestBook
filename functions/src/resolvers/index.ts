@@ -5,7 +5,7 @@ import { DataSources } from '../dataSources'
 
 import { QUESTS } from '../quests'
 import { updateQuestForUser } from './updateQuestForUser'
-import { fetchQuest } from './fetchQuest'
+import { getQuest } from './getQuest'
 import { verifySigningAddress } from './utils'
 import { QuestDefinition } from '../quests/types'
 
@@ -16,7 +16,7 @@ export const resolvers: Resolvers<{ dataSources: DataSources }> = {
     quests: async (_ctx, { userId: _userId }, { dataSources }) => {
       const userId = _userId?.toLowerCase()
       const user = userId ? await dataSources.users.getOrCreate(userId) : undefined
-      return Promise.all(QUESTS.map((questDefinition) => fetchQuest(questDefinition, user)))
+      return Promise.all(QUESTS.map((questDefinition) => getQuest(questDefinition, user)))
     },
 
     quest: async (_ctx, { questId, userId: _userId }, { dataSources }) => {
@@ -27,7 +27,7 @@ export const resolvers: Resolvers<{ dataSources: DataSources }> = {
 
       const user = userId ? await dataSources.users.getOrCreate(userId) : undefined
 
-      return fetchQuest(questDefinition, user)
+      return getQuest(questDefinition, user)
     },
 
     user: async (_ctx, { userId: _userId }, { dataSources }) => {
@@ -71,34 +71,41 @@ export const resolvers: Resolvers<{ dataSources: DataSources }> = {
   User: {
     quests: async ({ id }, _args, { dataSources }) => {
       const user = await dataSources.users.getOrCreate(id)
-      const quests = await Promise.all(QUESTS.map((questDefinition) => fetchQuest(questDefinition, user)))
+      const quests = await Promise.all(QUESTS.map((questDefinition) => getQuest(questDefinition, user)))
       return quests.map<UserQuest | null>((quest) => quest.userQuest).filter(Boolean) as UserQuest[]
     },
   },
 
   Mutation: {
     updateQuest: async (_ctx, { userId: _userId, questId }, { dataSources }) => {
+      if (!_userId) throw new Error('Missing userId')
       const userId = _userId.toLowerCase()
 
       const questDefinition = getQuestDefinition(questId)
       if (!questDefinition) throw new Error('Quest not found')
 
-      const user = await dataSources.users.getOrCreate(userId)
+      let user = await dataSources.users.getOrCreate(userId)
 
       await updateQuestForUser(user, questId, dataSources)
 
-      return fetchQuest(questDefinition, user)
+      user = await dataSources.users.getOrCreate(userId)
+
+      return getQuest(questDefinition, user)
     },
 
     updateQuests: async (_ctx, { userId: _userId }, { dataSources }) => {
+      if (!_userId) throw new Error('Missing userId')
       const userId = _userId.toLowerCase()
-      const user = await dataSources.users.getOrCreate(userId)
+
+      let user = await dataSources.users.getOrCreate(userId)
 
       for (const quest of QUESTS) {
         await updateQuestForUser(user, quest.id, dataSources)
       }
 
-      return QUESTS.map((questDefinition) => fetchQuest(questDefinition, user))
+      user = await dataSources.users.getOrCreate(userId)
+
+      return QUESTS.map((questDefinition) => getQuest(questDefinition, user))
     },
 
     queueOptIn: async (_ctx, { userId: _userId, signature }, { dataSources }) => {

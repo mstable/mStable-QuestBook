@@ -7,7 +7,7 @@ const objectives: QuestObjective[] = [mintedPolygonMusd, mintedMainnetMusd]
 
 export const metanautSpaceProgram: QuestDefinition = {
   id: 'metanautSpaceProgram',
-  ethereumId: 1,
+  // ethereumId: 1,
   objectives,
   requiredPoints: 100,
   title: 'Metanaut Space Program',

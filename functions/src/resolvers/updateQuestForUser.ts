@@ -36,13 +36,14 @@ export const updateQuestForUser = async ({ id: userId, quests }: UserDoc, questI
   )
 
   // Complete or set progress for objectives
-  await Promise.all(
-    objectiveCompletions.map(async ({ userId, complete, progress, objectiveId }) => {
-      if (complete) return dataSources.users.completeQuestObjective(userId, questId, objectiveId)
-      if (progress) return dataSources.users.setQuestObjectiveProgress(userId, questId, objectiveId, progress)
-      return undefined
-    }),
-  )
+  for (const objectiveCompletion of objectiveCompletions) {
+    const { userId, complete, progress, objectiveId } = objectiveCompletion
+    if (complete) {
+      await dataSources.users.completeQuestObjective(userId, questId, objectiveId)
+    } else if (progress) {
+      await dataSources.users.setQuestObjectiveProgress(userId, questId, objectiveId, progress)
+    }
+  }
 
   // Get new status
   userQuest = await dataSources.users.getOrCreateUserQuest(userId, questId)
