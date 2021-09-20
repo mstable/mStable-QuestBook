@@ -54,6 +54,7 @@ const objectives: QuestObjective[] = [
       const complete = progress >= 1
       logger.debug(
         JSON.stringify({
+          account,
           amountStakedBPTInMTATermsSimple,
           amountStakedMTAV2Simple,
           totalAmountStakedInMTATerms,
