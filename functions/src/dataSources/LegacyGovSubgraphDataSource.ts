@@ -5,12 +5,10 @@ export class LegacyGovSubgraphDataSource extends SubgraphDataSource {
     return new LegacyGovSubgraphDataSource('/subgraphs/name/mstable/mstable-governance')
   }
 
-  async didStakeBeforeCutoff(account: string) {
-    const cutoffTimestamp = 1623080555 // Mon Jun 07 2021 15:42:35 GMT+0000
-    const blockAtCutoff = 12588271
+  async wasStakedInV1(account: string) {
     const result = await this.query<{ userLockups: { id: string }[] }>(
       `query {
-          userLockups(where: { account: "${account}", ejected: false, ts_lt: ${cutoffTimestamp} }, block: { number: ${blockAtCutoff} }) {
+          userLockups(where: { account: "${account}" }) {
               id
           }
       }`,
@@ -18,12 +16,11 @@ export class LegacyGovSubgraphDataSource extends SubgraphDataSource {
     return !!result.body.data.userLockups[0]?.id
   }
 
-  async stakedAmountBeforeCutoff(account: string): Promise<number> {
-    const cutoffTimestamp = 1623080555 // Mon Jun 07 2021 15:42:35 GMT+0000
-    const blockAtCutoff = 12588271
+  async mostRecentStakeAmount(account: string): Promise<number> {
+    const blockAtExpiry = 13261953
     const result = await this.query<{ userLockups: { id: string; value: string }[] }>(
       `query {
-          userLockups(where: { account: "${account}", ts_lt: ${cutoffTimestamp}}, block: { number: ${blockAtCutoff} }) {
+          userLockups(where: { account: "${account}", value_gt: 0 }, block: { number: ${blockAtExpiry} }) {
               id
               value
           }
