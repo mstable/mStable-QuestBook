@@ -36,4 +36,4 @@ const server = new ApolloServer({
 
 const handler = server.createHandler() as unknown as (req: Request, resp: express.Response) => Promise<void>
 
-export const questbook = functions.https.onRequest(handler)
+export const questbook = functions.region('europe-west1').https.onRequest(handler)
