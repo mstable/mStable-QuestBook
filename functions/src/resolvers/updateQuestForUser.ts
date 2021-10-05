@@ -51,14 +51,12 @@ export const updateQuestForUser = async ({ id: userId, quests }: UserDoc, questI
   const allObjectivesCompleted = completedObjectives.length === quest.objectives.length
 
   // Try to complete
-  if (allObjectivesCompleted) {
+  if (allObjectivesCompleted && typeof quest.ethereumId === 'number') {
     let signature
-    if (typeof quest.ethereumId === 'number') {
-      const ethereumQuest = await dataSources.questManager.contract.getQuest(quest.ethereumId)
-      const withinCompletionWindow = getUnixTime(Date.now()) <= ethereumQuest.expiry
-      if (withinCompletionWindow) {
-        signature = await signQuestSubmission(quest.ethereumId.toString(), userId)
-      }
+    const ethereumQuest = await dataSources.questManager.contract.getQuest(quest.ethereumId)
+    const withinCompletionWindow = getUnixTime(Date.now()) <= ethereumQuest.expiry
+    if (withinCompletionWindow) {
+      signature = await signQuestSubmission(quest.ethereumId.toString(), userId)
     }
 
     await dataSources.users.completeQuest(userId, questId, signature)
