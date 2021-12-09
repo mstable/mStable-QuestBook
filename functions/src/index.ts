@@ -22,6 +22,7 @@ const server = new ApolloServer({
     ) {
       return error.originalError
     }
+    console.log(error)
     return new ApolloError('Internal server error')
   },
   debug: false,

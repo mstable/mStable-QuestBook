@@ -10,6 +10,8 @@ import { StakedTokenMTA } from '../typechain/StakedTokenMTA'
 import { StakedTokenMTA__factory } from '../typechain/factories/StakedTokenMTA__factory'
 import { StakedTokenBPT } from '../typechain/StakedTokenBPT'
 import { StakedTokenBPT__factory } from '../typechain/factories/StakedTokenBPT__factory'
+import { EmissionsController } from '../typechain/EmissionsController'
+import { EmissionsController__factory } from '../typechain/factories/EmissionsController__factory'
 
 import { ContractDataSource } from './ContractDataSource'
 import { UserDoc, UsersDataSource } from './UsersDataSource'
@@ -22,6 +24,7 @@ export interface DataSources {
   users: UsersDataSource
 
   // Contracts
+  emissionsController: ContractDataSource<EmissionsController>
   questManager: ContractDataSource<QuestManager>
   stakedTokenMTA: ContractDataSource<StakedTokenMTA>
   stakedTokenBPT: ContractDataSource<StakedTokenBPT>
@@ -46,7 +49,7 @@ export const dataSources = (): DataSources => {
     network,
     infura_key,
     infura_id,
-    data_sources: { staked_token_mta_address, staked_token_bpt_address, quest_manager_address },
+    data_sources: { staked_token_mta_address, staked_token_bpt_address, quest_manager_address, emissions_controller_address },
   } = config().questbook
 
   const provider = new providers.InfuraProvider(network, { projectId: infura_id, projectSecret: infura_key })
@@ -54,6 +57,7 @@ export const dataSources = (): DataSources => {
   const stakedTokenMTA = StakedTokenMTA__factory.connect(staked_token_mta_address, provider)
   const stakedTokenBPT = StakedTokenBPT__factory.connect(staked_token_bpt_address, provider)
   const questManager = QuestManager__factory.connect(quest_manager_address, provider)
+  const emissionsController = EmissionsController__factory.connect(emissions_controller_address, provider)
 
   const firestore = admin.firestore()
   const usersCollection = firestore.collection('users') as CollectionReference<UserDoc>
@@ -62,6 +66,7 @@ export const dataSources = (): DataSources => {
     questManager: new ContractDataSource(questManager as never),
     stakedTokenMTA: new ContractDataSource(stakedTokenMTA as never),
     stakedTokenBPT: new ContractDataSource(stakedTokenBPT as never),
+    emissionsController: new ContractDataSource(emissionsController as never),
     users: new UsersDataSource(usersCollection),
     legacyGovSubgraph: LegacyGovSubgraphDataSource.create(),
     polygonProtocolSubgraph: PolygonProtocolSubgraphDataSource.create(),
