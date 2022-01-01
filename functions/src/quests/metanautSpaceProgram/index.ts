@@ -9,6 +9,10 @@ import { imAllIn } from './imAllIn'
 import { patOnTheBack } from './patOnTheBack'
 import { poaps } from './poaps'
 import { gmBossDefeated } from './gmBossDefeated'
+import { soEarly } from './soEarly'
+import { stillEarly } from './stillEarly'
+import { saved } from './saved'
+import { snapshotVoter } from './snapshotVoter'
 
 const objectives: QuestObjective[] = [
   mintedPolygonMusd, // 5
@@ -18,10 +22,13 @@ const objectives: QuestObjective[] = [
   imAllIn, // 3
   selfless, // 5
   patOnTheBack, // 2
-  poaps, // 20
+  poaps, // 33
   gmBossDefeated, // 10
+  saved, // 10
+  soEarly, // 50
+  stillEarly, // 25
+  snapshotVoter, // 25
 ]
-// total: 56
 
 export const metanautSpaceProgram: QuestDefinition = {
   id: 'metanautSpaceProgram',
