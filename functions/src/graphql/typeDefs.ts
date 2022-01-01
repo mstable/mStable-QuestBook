@@ -22,6 +22,7 @@ export const typeDefs = gql`
   type UserQuest {
     id: ID!
     complete: Boolean!
+    completedAt: Int
     progress: Float
     signature: String
     objectives: [UserQuestObjective!]
@@ -30,6 +31,7 @@ export const typeDefs = gql`
   type UserQuestObjective {
     id: ID!
     complete: Boolean!
+    completedAt: Int
     progress: Float
   }
 
@@ -75,6 +77,7 @@ export const typeDefs = gql`
         id
         signature
         complete
+        completedAt
         progress
         objectives {
           id

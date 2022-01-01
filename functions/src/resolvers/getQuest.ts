@@ -14,18 +14,20 @@ export const getQuest = (quest: QuestDefinition, user?: UserDoc) => {
   }
 
   if (userQuestDoc && user) {
-    const { complete, progress, signature, objectives: userObjectives } = userQuestDoc
+    const { complete, completedAt, progress, signature, objectives: userObjectives } = userQuestDoc
 
     userQuest = {
       id: `${id}.${user.id}`,
       signature,
       complete,
       progress,
+      completedAt,
       objectives: objectives.map((objective) => ({
         ...objective,
         ...(userObjectives?.find((userObjective) => userObjective.objectiveId === objective.id) ?? {
           complete: false,
           progress: 0,
+          completedAt: 0,
         }),
       })),
     }

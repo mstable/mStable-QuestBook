@@ -72,7 +72,7 @@ export type Quest = {
   readonly __typename?: 'Quest';
   readonly id: Scalars['ID'];
   readonly ethereumId?: Maybe<Scalars['Int']>;
-  readonly requiredPoints?: Maybe<Scalars['Int']>;
+  readonly requiredPoints?: Maybe<Scalars['Float']>;
   readonly objectives: ReadonlyArray<QuestObjective>;
   readonly title: Scalars['String'];
   readonly description: Scalars['String'];
@@ -94,7 +94,7 @@ export type QuestCompletionQueueItem = {
 export type QuestObjective = {
   readonly __typename?: 'QuestObjective';
   readonly id: Scalars['ID'];
-  readonly points: Scalars['Int'];
+  readonly points: Scalars['Float'];
   readonly title: Scalars['String'];
   readonly description: Scalars['String'];
 };
@@ -110,6 +110,7 @@ export type UserQuest = {
   readonly __typename?: 'UserQuest';
   readonly id: Scalars['ID'];
   readonly complete: Scalars['Boolean'];
+  readonly completedAt?: Maybe<Scalars['Int']>;
   readonly progress?: Maybe<Scalars['Float']>;
   readonly signature?: Maybe<Scalars['String']>;
   readonly objectives?: Maybe<ReadonlyArray<UserQuestObjective>>;
@@ -119,6 +120,7 @@ export type UserQuestObjective = {
   readonly __typename?: 'UserQuestObjective';
   readonly id: Scalars['ID'];
   readonly complete: Scalars['Boolean'];
+  readonly completedAt?: Maybe<Scalars['Int']>;
   readonly progress?: Maybe<Scalars['Float']>;
 };
 
@@ -198,12 +200,12 @@ export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<{}>;
   Quest: ResolverTypeWrapper<Quest>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
+  Float: ResolverTypeWrapper<Scalars['Float']>;
   QuestCompletionQueueItem: ResolverTypeWrapper<QuestCompletionQueueItem>;
   QuestObjective: ResolverTypeWrapper<QuestObjective>;
   User: ResolverTypeWrapper<User>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   UserQuest: ResolverTypeWrapper<UserQuest>;
-  Float: ResolverTypeWrapper<Scalars['Float']>;
   UserQuestObjective: ResolverTypeWrapper<UserQuestObjective>;
 }>;
 
@@ -215,12 +217,12 @@ export type ResolversParentTypes = ResolversObject<{
   Query: {};
   Quest: Quest;
   Int: Scalars['Int'];
+  Float: Scalars['Float'];
   QuestCompletionQueueItem: QuestCompletionQueueItem;
   QuestObjective: QuestObjective;
   User: User;
   Boolean: Scalars['Boolean'];
   UserQuest: UserQuest;
-  Float: Scalars['Float'];
   UserQuestObjective: UserQuestObjective;
 }>;
 
@@ -241,7 +243,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 export type QuestResolvers<ContextType = any, ParentType extends ResolversParentTypes['Quest'] = ResolversParentTypes['Quest']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   ethereumId?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  requiredPoints?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  requiredPoints?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   objectives?: Resolver<ReadonlyArray<ResolversTypes['QuestObjective']>, ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -258,7 +260,7 @@ export type QuestCompletionQueueItemResolvers<ContextType = any, ParentType exte
 
 export type QuestObjectiveResolvers<ContextType = any, ParentType extends ResolversParentTypes['QuestObjective'] = ResolversParentTypes['QuestObjective']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  points?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  points?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -274,6 +276,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 export type UserQuestResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserQuest'] = ResolversParentTypes['UserQuest']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   complete?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  completedAt?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   progress?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   signature?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   objectives?: Resolver<Maybe<ReadonlyArray<ResolversTypes['UserQuestObjective']>>, ParentType, ContextType>;
@@ -283,6 +286,7 @@ export type UserQuestResolvers<ContextType = any, ParentType extends ResolversPa
 export type UserQuestObjectiveResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserQuestObjective'] = ResolversParentTypes['UserQuestObjective']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   complete?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  completedAt?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   progress?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
