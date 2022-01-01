@@ -8,7 +8,7 @@ const objectives: QuestObjective[] = [
     title: 'Staked in V1',
     description: 'You were staked in V1 before the cutoff date',
     points: 50,
-    async checker(account, dataSources) {
+    async checker(account, delegates, dataSources) {
       const complete = await dataSources.legacyGovSubgraph.wasStakedInV1(account)
       return {
         complete,
@@ -21,7 +21,7 @@ const objectives: QuestObjective[] = [
     title: 'Migrate to V2',
     description: 'Migrate 90% of your previous staked balance to Staking V2 before the cutoff date',
     points: 50,
-    async checker(account, dataSources) {
+    async checker(account, delegates, dataSources) {
       const wasStakedInV1 = await dataSources.legacyGovSubgraph.wasStakedInV1(account)
       const mostRecentStakeAmount = await dataSources.legacyGovSubgraph.mostRecentStakeAmount(account)
 

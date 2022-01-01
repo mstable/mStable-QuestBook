@@ -2,6 +2,7 @@ import { UserDoc } from '../dataSources/UsersDataSource'
 import { DataSources } from '../dataSources'
 import { QUESTS } from '../quests'
 import { getUnixTime, signQuestSubmission } from './utils'
+import { constants } from 'ethers'
 
 export const updateQuestForUser = async ({ id: userId, quests }: UserDoc, questId: string, dataSources: DataSources) => {
   let userQuest = quests.find((item) => item.questId === questId)
@@ -27,10 +28,19 @@ export const updateQuestForUser = async ({ id: userId, quests }: UserDoc, questI
     ({ id }) => !userQuest || !userQuest.objectives.find((item) => item.objectiveId === id && item.complete),
   )
 
+  // Get the user's delegates; some quests allow completion for delegators
+  const delegates = new Set<string>(
+    [
+      userId,
+      await dataSources.stakedTokenMTA.contract.delegates(userId),
+      await dataSources.stakedTokenBPT.contract.delegates(userId),
+    ].filter((addr) => addr !== constants.AddressZero),
+  )
+
   // Run the checker for each objective
   const objectiveCompletions = await Promise.all(
     nonCompletedObjectives.map(async ({ id: objectiveId, checker }) => {
-      const objectiveCompletion = await checker(userId, dataSources)
+      const objectiveCompletion = await checker(userId, delegates, dataSources)
       return { userId, objectiveId, ...objectiveCompletion }
     }),
   )

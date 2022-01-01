@@ -5,7 +5,7 @@ export const mintedMainnetMusd: QuestObjective = {
   title: 'Minted Mainnet mUSD',
   description: 'We like the stablecoins.',
   points: 5,
-  async checker(account, dataSources) {
+  async checker(account, delegates, dataSources) {
     const complete = await dataSources.mainnetProtocolSubgraph.didMintMusd(account)
     return {
       complete,
