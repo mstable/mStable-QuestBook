@@ -1,9 +1,9 @@
 import { QuestObjective } from '../types'
 
-export const aDecentProposal: QuestObjective = {
-  id: 'aDecentProposal',
-  title: 'A Decent Proposal',
-  description: 'Proposed a Snapshot vote and received x votes',
+export const vote: QuestObjective = {
+  id: 'vote',
+  title: 'Snapshot Voter',
+  description: 'Voted on a mstablegovernancedao.eth vote',
   points: 25,
   async checker(account, delegates, dataSources) {
     const complete = await dataSources.snapshot.didVote(account)

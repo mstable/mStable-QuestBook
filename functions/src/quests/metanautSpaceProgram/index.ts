@@ -12,7 +12,9 @@ import { gmBossDefeated } from './gmBossDefeated'
 import { soEarly } from './soEarly'
 import { stillEarly } from './stillEarly'
 import { saved } from './saved'
-import { snapshotVoter } from './snapshotVoter'
+import { vote } from './vote'
+import { enoughVotes } from './enoughVotes'
+import { moreThanEnoughVotes } from './moreThanEnoughVotes'
 
 const objectives: QuestObjective[] = [
   mintedPolygonMusd, // 5
@@ -27,7 +29,9 @@ const objectives: QuestObjective[] = [
   saved, // 10
   soEarly, // 50
   stillEarly, // 25
-  snapshotVoter, // 25
+  vote, // 25
+  enoughVotes, // 10
+  moreThanEnoughVotes, // 25
 ]
 
 export const metanautSpaceProgram: QuestDefinition = {

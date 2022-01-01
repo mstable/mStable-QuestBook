@@ -47,4 +47,23 @@ export class SnapshotDataSource extends HTTPDataSource {
     }`)
     return !!result.body.data?.votes?.[0]?.id
   }
+
+  async getHighestVotesForRecentProposals() {
+    const result = await this.query<{ proposals: { id: string; votes: number }[] }>(`{
+      proposals(
+        first: 5,
+        skip: 0,
+        where: {
+          space_in: ["mstablegovernance.eth"],
+        },
+        orderBy: "created",
+        orderDirection: desc
+      ) {
+        id
+        votes
+      }
+    }`)
+    const entries = (result.body.data?.proposals ?? []).map((p) => p.votes).sort()
+    return entries.length > 0 ? entries[entries.length - 1] : 0
+  }
 }
