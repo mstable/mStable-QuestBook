@@ -18,6 +18,7 @@ import { UserDoc, UsersDataSource } from './UsersDataSource'
 import { LegacyGovSubgraphDataSource } from './LegacyGovSubgraphDataSource'
 import { PolygonProtocolSubgraphDataSource } from './PolygonProtocolSubgraphDataSource'
 import { MainnetProtocolSubgraphDataSource } from './MainnetProtocolSubgraphDataSource'
+import { PoapDataSource } from './PoapDataSource'
 
 export interface DataSources {
   // Firestores
@@ -33,6 +34,7 @@ export interface DataSources {
   legacyGovSubgraph: LegacyGovSubgraphDataSource
   polygonProtocolSubgraph: PolygonProtocolSubgraphDataSource
   mainnetProtocolSubgraph: MainnetProtocolSubgraphDataSource
+  poaps: PoapDataSource
 }
 
 const adminConfig = JSON.parse(process.env.FIREBASE_CONFIG as string)
@@ -71,5 +73,6 @@ export const dataSources = (): DataSources => {
     legacyGovSubgraph: LegacyGovSubgraphDataSource.create(),
     polygonProtocolSubgraph: PolygonProtocolSubgraphDataSource.create(),
     mainnetProtocolSubgraph: MainnetProtocolSubgraphDataSource.create(),
+    poaps: PoapDataSource.create(),
   }
 }
