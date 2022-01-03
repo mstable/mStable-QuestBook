@@ -1,8 +1,10 @@
+import { constants } from 'ethers'
+import { logger } from 'firebase-functions'
+
 import { UserDoc } from '../dataSources/UsersDataSource'
 import { DataSources } from '../dataSources'
 import { QUESTS } from '../quests'
 import { getUnixTime, signQuestSubmission } from './utils'
-import { constants } from 'ethers'
 
 export const updateQuestForUser = async ({ id: userId, quests }: UserDoc, questId: string, dataSources: DataSources) => {
   let userQuest = quests.find((item) => item.questId === questId)
@@ -40,8 +42,13 @@ export const updateQuestForUser = async ({ id: userId, quests }: UserDoc, questI
   // Run the checker for each objective
   const objectiveCompletions = await Promise.all(
     nonCompletedObjectives.map(async ({ id: objectiveId, checker }) => {
-      const objectiveCompletion = await checker(userId, delegates, dataSources)
-      return { userId, objectiveId, ...objectiveCompletion }
+      try {
+        const objectiveCompletion = await checker(userId, delegates, dataSources)
+        return { userId, objectiveId, ...objectiveCompletion }
+      } catch (error) {
+        logger.warn(`Error checking objective ${objectiveId}`, error)
+        return { userId, objectiveId, progress: 0, complete: false }
+      }
     }),
   )
 

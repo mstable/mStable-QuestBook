@@ -12,32 +12,25 @@ export class PoapDataSource {
     this.mainnet = new SubgraphDataSource(mainnet)
     this.gnosis = new SubgraphDataSource(gnosis)
   }
-
   private static hasPoapQuery(account: string, eventId: number) {
-    return `
-        {
-          tokens(where:{event:"${eventId}", owner: "${account}") { id }
-        }
-      `
+    return `{ tokens(where:{event:"${eventId}", owner: "${account}" }) { id } }`
   }
 
   private static hasPoapsQuery(account: string, eventIds: number[]) {
-    return `
-        {
-          tokens(where:{event_in:"${eventIds.join(',')}", owner: "${account}") { id }
-        }
-      `
+    return `{ tokens(where:{event_in:[${eventIds.map((id) => `"${id}"`).join(',')}], owner: "${account}" }) { id } }`
   }
 
-  async hasPoap(account: string, eventId: number, network: 'gnosis' | 'mainnet') {
-    const dataSource = this[network]
-    const result = await dataSource.query<{ tokens?: { id: string }[] }>(PoapDataSource.hasPoapQuery(account, eventId))
-    return !!result.body.data.tokens?.[0]?.id
+  async multiQuery<T>(query: string) {
+    return Promise.all([this.gnosis, this.mainnet].map((dataSource) => dataSource.query<T>(query)))
   }
 
-  async poapCount(account: string, eventIds: number[], network: 'gnosis' | 'mainnet') {
-    const dataSource = this[network]
-    const result = await dataSource.query<{ tokens?: { id: string }[] }>(PoapDataSource.hasPoapsQuery(account, eventIds))
-    return (result.body.data.tokens ?? []).length
+  async hasPoap(account: string, eventId: number) {
+    const responses = await this.multiQuery<{ tokens?: { id: string }[] }>(PoapDataSource.hasPoapQuery(account, eventId))
+    return responses.some((resp) => !!resp.body.data.tokens?.[0]?.id)
+  }
+
+  async poapCount(account: string, eventIds: number[]) {
+    const responses = await this.multiQuery<{ tokens?: { id: string }[] }>(PoapDataSource.hasPoapsQuery(account, eventIds))
+    return responses.reduce((prev, resp) => prev + (resp.body.data.tokens?.length ?? 0), 0)
   }
 }
