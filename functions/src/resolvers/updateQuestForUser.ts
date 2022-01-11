@@ -27,16 +27,16 @@ export const updateQuestForUser = async ({ id: userId, quests }: UserDoc, questI
 
   // Find non-completed objectives
   const nonCompletedObjectives = quest.objectives.filter(
-    ({ id }) => !userQuest || !userQuest.objectives.find((item) => item.objectiveId === id && item.complete),
+    // Check for completedAt as well, because old objectives don't
+    // have completedAt set, and we have changed the points.
+    ({ id }) => !userQuest || !userQuest.objectives.find((item) => item.objectiveId === id && item.complete && item.completedAt),
   )
 
   // Get the user's delegates; some quests allow completion for delegators
   const delegates = new Set<string>(
-    [
-      userId,
-      await dataSources.stakedTokenMTA.contract.delegates(userId),
-      await dataSources.stakedTokenBPT.contract.delegates(userId),
-    ].filter((addr) => addr !== constants.AddressZero),
+    [userId, await dataSources.stakedTokenMTA.contract.delegates(userId), await dataSources.stakedTokenBPT.contract.delegates(userId)]
+      .filter((addr) => addr !== constants.AddressZero)
+      .map((addr) => addr.toLowerCase()),
   )
 
   // Run the checker for each objective

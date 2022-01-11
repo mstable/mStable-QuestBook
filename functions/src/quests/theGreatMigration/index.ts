@@ -1,4 +1,3 @@
-import { logger } from 'firebase-functions'
 import { formatUnits } from 'ethers/lib/utils'
 import { QuestObjective, QuestDefinition } from '../types'
 
@@ -52,18 +51,6 @@ const objectives: QuestObjective[] = [
       const threshold = mostRecentStakeAmount * 0.9
       const progress = Math.max(Math.min(totalAmountStakedInMTATerms / threshold, 1), 0)
       const complete = progress >= 1
-
-      logger.debug(
-        JSON.stringify({
-          account,
-          amountStakedBPTInMTATermsSimple,
-          amountStakedMTAV2Simple,
-          totalAmountStakedInMTATerms,
-          threshold,
-          progress,
-          complete,
-        }),
-      )
 
       return {
         complete,

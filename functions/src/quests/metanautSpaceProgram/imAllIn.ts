@@ -4,7 +4,7 @@ export const imAllIn: QuestObjective = {
   id: 'imAllIn',
   title: "I'm All In",
   description: 'Aped into one Dial with 100% of your vote',
-  points: 3,
+  points: 5,
   async checker(account, delegates, dataSources) {
     let complete = false
     let progress = 0

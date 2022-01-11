@@ -4,7 +4,7 @@ export const setDial: QuestObjective = {
   id: 'setDial',
   title: 'Emissions Controllllooooooor',
   description: 'Set voting weights on Dials',
-  points: 4,
+  points: 10,
   async checker(account, delegates, dataSources) {
     let complete = false
     let progress = 0

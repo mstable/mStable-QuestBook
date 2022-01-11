@@ -9,7 +9,8 @@ import { imAllIn } from './imAllIn'
 import { patOnTheBack } from './patOnTheBack'
 import { soEarly } from './soEarly'
 import { stillEarly } from './stillEarly'
-import { saved } from './saved'
+import { saver } from './saver'
+import { saverPolygon } from './saverPolygon'
 import { vote } from './vote'
 import { enoughVotes } from './enoughVotes'
 import { moreThanEnoughVotes } from './moreThanEnoughVotes'
@@ -19,31 +20,31 @@ import { poaps3 } from './poaps3'
 import { theChickenOfDestiny } from './theChickenOfDestiny'
 
 const objectives: QuestObjective[] = [
-  mintedPolygonMusd, // 5
-  mintedMainnetMusd, // 5
-  delegatooor, // 2
-  setDial, // 4
-  imAllIn, // 3
-  selfless, // 5
-  patOnTheBack, // 2
-  poaps1, // 10
-  poaps2, // 10
-  poaps3, // 10
-  theChickenOfDestiny, // 5
-  saved, // 5
-  soEarly, // 50
-  stillEarly, // 25
-  vote, // 25
-  enoughVotes, // 10
-  moreThanEnoughVotes, // 25
+  mintedPolygonMusd,
+  mintedMainnetMusd,
+  delegatooor,
+  setDial,
+  imAllIn,
+  selfless,
+  patOnTheBack,
+  poaps1,
+  poaps2,
+  poaps3,
+  theChickenOfDestiny,
+  saver,
+  saverPolygon,
+  soEarly,
+  stillEarly,
+  vote,
+  enoughVotes,
+  moreThanEnoughVotes,
 ]
-// Total: 201 (required: 100)
 
 export const metanautSpaceProgram: QuestDefinition = {
   id: 'metanautSpaceProgram',
-  ethereumId: 1,
+  ethereumId: 2,
   objectives,
   requiredPoints: 100,
   title: 'Metanaut Space Program',
-  description: 'To the moon. Get at least 100 QP to complete this quest. More objectives are coming throughout Season 0.',
+  description: 'To the moon. Get at least 100 QP to complete this quest.',
 }

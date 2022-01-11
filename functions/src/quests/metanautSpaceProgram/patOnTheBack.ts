@@ -4,7 +4,7 @@ export const patOnTheBack: QuestObjective = {
   id: 'patOnTheBack',
   title: 'Pat on the back',
   description: "As a staker, voted with over 50% of your vote on staking rewards. After all, why not? Why shouldn't I keep it?",
-  points: 2,
+  points: 5,
   async checker(account, delegates, dataSources) {
     let complete = false
     let progress = 0

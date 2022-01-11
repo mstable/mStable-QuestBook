@@ -4,7 +4,7 @@ export const soEarly: QuestObjective = {
   id: 'soEarly',
   title: 'So early it hurts',
   description: "Got a tx in before 09/2020. Credit where it's due.",
-  points: 50,
+  points: 25,
   async checker(account, delegates, dataSources) {
     const timestamp = await dataSources.mainnetProtocolSubgraph.getEarliestTx(account)
     if (!timestamp) {
