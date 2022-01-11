@@ -5,7 +5,7 @@ export interface ObjectiveCompletion {
   progress?: number
 }
 
-export type ObjectiveChecker = (account: string, dataSources: DataSources) => Promise<ObjectiveCompletion>
+export type ObjectiveChecker = (account: string, delegates: Set<string>, dataSources: DataSources) => Promise<ObjectiveCompletion>
 
 export interface QuestObjective {
   id: string

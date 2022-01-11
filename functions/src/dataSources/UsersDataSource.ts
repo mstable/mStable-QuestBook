@@ -1,15 +1,19 @@
+import { Timestamp } from '@google-cloud/firestore'
 import { FirestoreDataSource } from 'apollo-datasource-firestore'
+
 import { QUESTS } from '../quests'
 
 interface UserQuestObjectiveDoc {
   objectiveId: string
   complete: boolean
+  completedAt?: number
   progress: number
 }
 
 interface UserQuestDoc {
   questId: string
   complete: boolean
+  completedAt?: number
   progress: number
   signature?: string
   objectives: UserQuestObjectiveDoc[]
@@ -58,11 +62,15 @@ export class UsersDataSource extends FirestoreDataSource<UserDoc, null> {
   }
 
   async completeQuest(id: string, questId: string, signature?: string) {
-    return this.updateUserQuest(id, questId, { signature, complete: true, progress: 1 })
+    return this.updateUserQuest(id, questId, { signature, complete: true, progress: 1, completedAt: Timestamp.now().seconds })
   }
 
   async completeQuestObjective(id: string, questId: string, objectiveId: string) {
-    return this.updateUserQuestObjective(id, questId, objectiveId, { complete: true, progress: 1 })
+    return this.updateUserQuestObjective(id, questId, objectiveId, {
+      complete: true,
+      progress: 1,
+      completedAt: Timestamp.now().seconds,
+    })
   }
 
   private async ensureUserQuestExists(id: string, questId: string): Promise<UserDoc> {
@@ -110,9 +118,27 @@ export class UsersDataSource extends FirestoreDataSource<UserDoc, null> {
   private async updateUserQuest(id: string, questId: string, mod: Partial<UserQuestDoc>) {
     const user = await this.ensureUserQuestExists(id, questId)
 
-    const userQuests = user.quests.map((userQuest) => (userQuest.questId === questId ? { ...userQuest, ...mod } : userQuest))
+    const docRef = this.collection.doc(id)
+    return this.collection.firestore.runTransaction(async (tx) => {
+      const doc = await tx.get(docRef)
+      const data = doc.data()
+      if (!data) return
 
-    return this.collection.doc(id).set({ quests: userQuests }, { merge: true })
+      const existing = data.quests.find((userQuest) => userQuest.questId === questId)
+      const update = {
+        ...data,
+        quests: user.quests.map((userQuest) => {
+          if (userQuest.questId === questId) {
+            // Do not overwrite completedAt if set
+            const completedAt = existing?.completedAt ?? mod.completedAt
+            return { ...userQuest, ...mod, completedAt }
+          }
+          return userQuest
+        }),
+      }
+
+      tx.set(docRef, update)
+    })
   }
 
   private async updateUserQuestObjective(id: string, questId: string, objectiveId: string, mod: Partial<UserQuestObjectiveDoc>) {
@@ -121,18 +147,32 @@ export class UsersDataSource extends FirestoreDataSource<UserDoc, null> {
     const userQuest = this.getUserQuest(user, questId)
     const userQuestObjective = this.getUserQuestObjective(userQuest, objectiveId)
 
-    const userQuests = user.quests.map((_userQuest) =>
-      _userQuest.questId === questId
-        ? {
-            ...userQuest,
-            objectives: userQuest.objectives.map((_objective) =>
-              _objective.objectiveId === objectiveId ? { ...userQuestObjective, ...mod } : _objective,
-            ),
-          }
-        : _userQuest,
-    )
+    const docRef = this.collection.doc(id)
+    return this.collection.firestore.runTransaction(async (tx) => {
+      const doc = await tx.get(docRef)
+      const data = doc.data()
+      if (!data) return
 
-    return this.collection.doc(id).set({ quests: userQuests }, { merge: true })
+      const update = {
+        ...data,
+        quests: user.quests.map((userQuest) => {
+          if (userQuest.questId === questId) {
+            const existingObjective = userQuest.objectives.find((obj) => obj.objectiveId === objectiveId)
+
+            // Do not overwrite completedAt if set
+            const completedAt = existingObjective?.completedAt ?? mod.completedAt
+            const objectives = userQuest.objectives.map((_objective) =>
+              _objective.objectiveId === objectiveId ? { ...userQuestObjective, ...mod, completedAt } : _objective,
+            )
+
+            return { ...userQuest, objectives }
+          }
+          return userQuest
+        }),
+      }
+
+      tx.set(docRef, update)
+    })
   }
 
   private getUserQuest(user: UserDoc, questId: string) {

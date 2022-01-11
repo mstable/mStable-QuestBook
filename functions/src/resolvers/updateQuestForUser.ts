@@ -1,3 +1,6 @@
+import { constants } from 'ethers'
+import { logger } from 'firebase-functions'
+
 import { UserDoc } from '../dataSources/UsersDataSource'
 import { DataSources } from '../dataSources'
 import { QUESTS } from '../quests'
@@ -24,14 +27,28 @@ export const updateQuestForUser = async ({ id: userId, quests }: UserDoc, questI
 
   // Find non-completed objectives
   const nonCompletedObjectives = quest.objectives.filter(
-    ({ id }) => !userQuest || !userQuest.objectives.find((item) => item.objectiveId === id && item.complete),
+    // Check for completedAt as well, because old objectives don't
+    // have completedAt set, and we have changed the points.
+    ({ id }) => !userQuest || !userQuest.objectives.find((item) => item.objectiveId === id && item.complete && item.completedAt),
+  )
+
+  // Get the user's delegates; some quests allow completion for delegators
+  const delegates = new Set<string>(
+    [userId, await dataSources.stakedTokenMTA.contract.delegates(userId), await dataSources.stakedTokenBPT.contract.delegates(userId)]
+      .filter((addr) => addr !== constants.AddressZero)
+      .map((addr) => addr.toLowerCase()),
   )
 
   // Run the checker for each objective
   const objectiveCompletions = await Promise.all(
     nonCompletedObjectives.map(async ({ id: objectiveId, checker }) => {
-      const objectiveCompletion = await checker(userId, dataSources)
-      return { userId, objectiveId, ...objectiveCompletion }
+      try {
+        const objectiveCompletion = await checker(userId, delegates, dataSources)
+        return { userId, objectiveId, ...objectiveCompletion }
+      } catch (error) {
+        logger.warn(`Error checking objective ${objectiveId}`, error)
+        return { userId, objectiveId, progress: 0, complete: false }
+      }
     }),
   )
 
