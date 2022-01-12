@@ -67,8 +67,15 @@ export const updateQuestForUser = async ({ id: userId, quests }: UserDoc, questI
   const completedObjectives = userQuest.objectives.filter((item) => item.complete)
   const allObjectivesCompleted = completedObjectives.length === quest.objectives.length
 
+  // Update quest progress
+  const completedPoints = quest.objectives
+    .filter((objective) => completedObjectives.find(({ objectiveId }) => objective.id === objectiveId))
+    .reduce((prev, current) => prev + current.points, 0)
+
+  const questProgress = completedPoints / quest.requiredPoints
+
   // Try to complete
-  if (allObjectivesCompleted && typeof quest.ethereumId === 'number') {
+  if ((allObjectivesCompleted || questProgress >= 1) && typeof quest.ethereumId === 'number') {
     let signature
     const ethereumQuest = await dataSources.questManager.contract.getQuest(quest.ethereumId)
     const withinCompletionWindow = getUnixTime(Date.now()) <= ethereumQuest.expiry
@@ -79,13 +86,6 @@ export const updateQuestForUser = async ({ id: userId, quests }: UserDoc, questI
     await dataSources.users.completeQuest(userId, questId, signature)
     return true
   }
-
-  // Update quest progress
-  const completedPoints = quest.objectives
-    .filter((objective) => completedObjectives.find(({ objectiveId }) => objective.id === objectiveId))
-    .reduce((prev, current) => prev + current.points, 0)
-
-  const questProgress = completedPoints / quest.requiredPoints
 
   await dataSources.users.setQuestProgress(userId, questId, questProgress)
   return true
